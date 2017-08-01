@@ -235,35 +235,6 @@ def flatten_parse(parse):
     return frozenset(content)
 
 
-def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
-    """ gets a db and a function and calculate the distance metrics"""
-    if save and os.path.isfile(save):
-        print("reading", save)
-        if save.endswith("csv"):
-            res = pd.read_csv(save)
-        if save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
-            res = pd.read_pickle(save)
-        if save.endswith("json"):
-            res = pd.read_json(save)  
-        return res
-    print("calculating distance matrix")   
-    d = {}
-    for i, r in db.iterrows():
-        index = []
-        distances = []
-        for j, c in db.iterrows():
-            index.append(c[NAME])
-            distances.append(func(normalize(r), normalize(c)))
-        d[r[NAME]] = pd.Series(distances, index=index)
-    res = pd.DataFrame(d)
-    res = res.sort_index()
-    if save.endswith("csv"):
-        res.to_csv(save)
-    if save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
-        res.to_pickle(save)
-    if save.endswith("json"):
-        res.to_json(save)
-    return res
 
 
 def to_comparable_array(row):
@@ -440,6 +411,49 @@ def learn_metric(db, extract, learning_algorithm, train_percentage=10):
     return learning_algorithm.fit(np.array(x), np.array(y))
 
 
+def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
+    """ gets a db and a function and calculate the distance metrics"""
+    if save and os.path.isfile(save):
+        print("reading", save)
+        if save.endswith("csv"):
+            res = pd.read_csv(save)
+        if save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
+            res = pd.read_pickle(save)
+        if save.endswith("json"):
+            res = pd.read_json(save)  
+        return res 
+
+    print("calculating distance matrix")   
+    d = {}
+    sort_by = np.argsort(db[GROUP])
+    db = db.iloc[sort_by, :]
+    for i, r in db.iterrows():
+        index = []
+        distances = []
+        for j, c in db.iterrows():
+            if i != j and all(normalize(r) == normalize(c)):
+                print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, normalize(r), normalize(c))
+            index.append(c[NAME])
+            distances.append(func(normalize(r), normalize(c)))
+        d[r[NAME]] = pd.Series(distances, index=index)
+    res = pd.DataFrame(d)[index]
+    if save:
+        path, basename = os.path.split(save)    
+        if save.endswith("csv"):
+            res.to_csv(save)
+            db[GROUP].to_csv(path + os.sep + "../clusters/" + basename)
+            print(path + os.sep + "../clusters/" + basename)
+        elif save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
+            res.to_pickle(save)
+            db[GROUP].to_pickle(path + os.sep + "../clusters/" + basename)
+        elif save.endswith("json"):
+            res.to_json(save)
+            db[GROUP].to_json(path + os.sep + "../clusters/" + basename)
+        else:
+            print("unknown file extension")
+    return res
+
+
 def main():
     # print(parse())
     # initialize directories
@@ -451,11 +465,22 @@ def main():
     dist_dir = file_path + "/distance_metrics/"
     if not os.path.isdir(dist_dir):
         os.mkdir(dist_dir)
+    clust_dir = file_path + "/clusters/"
+    if not os.path.isdir(clust_dir):
+        os.mkdir(clust_dir)
 
     inv_file = path + "inv.pckl"
     feature_file = path + "features.pckl"
     base_file = path + "base.pckl"
     inv_db, feature_db, base_db = parse(inv_file, feature_file, base_file)
+    # def tmp(r):
+    #     # print("row",r)
+    #     r[INV] = frozenset(r[INV])
+    #     return r
+    # base_db.apply(tmp, axis=1)
+    # print(len(base_db[INV]))
+    # print(len(base_db.drop_duplicates(INV)))
+    
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
     # print(inv_db)
@@ -467,13 +492,15 @@ def main():
     print("choose between different ml")
     print("ml with parsed")
     print("R!")
-    itml = learn_metric(inv_db, to_comparable_array, ml.ITML_Supervised(), train_percentage=5)
-    print("calculated model")
-    comparable_inv = np.array([to_comparable_array(row) for i, row in inv_db.iterrows()])
-    pd.DataFrame(itml.transform(), index=inv_db.index.values, columns = inv_db.index.values).to_csv(dist_dir + "inv_itml.csv")
+    # itml = learn_metric(inv_db, to_comparable_array, ml.ITML_Supervised(), train_percentage=5)
+    # print("calculated model")
+    # comparable_inv = np.array([to_comparable_array(row) for i, row in inv_db.iterrows()])
+    # pd.DataFrame(itml.transform(), index=inv_db.index.values, columns = inv_db.index.values).to_csv(dist_dir + "inv_itml.csv")
     # lmnn_metric = learn_metric(inv_db, to_comparable_array, ml.LMNN(k=5, learn_rate=1e-6))
     # print("calculated model")
     # print(lmnn_metric.transform())
+
+    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
     create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
     create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
     create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv")
@@ -482,9 +509,8 @@ def main():
     create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
     create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
-    # print(bag_of_features_dist(base_db.iloc[1,:][PARSED], base_db.iloc[2,:][PARSED], spdist.euclidean))
-    # print(inv_db.iloc[1,:])
-    # print(base_db.iloc[1,:])
+
+
     # pandas2ri.activate()
     # print(pandas2ri.py2ri(base_db))
     
