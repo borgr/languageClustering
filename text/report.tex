@@ -1,0 +1,250 @@
+\documentclass[
+12pt, % The default document font size, options: 10pt, 11pt, 12pt
+%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+english, % ngerman for German
+% singlespacing % Single line spacing, alternatives: onehalfspacing or 
+%onehalfspacing
+doublespacing
+,
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+%liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+toctotoc, % Uncomment to add the main table of contents to the table of contents
+parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{MastersDoctoralThesis} % The class file specifying the document structure
+
+%\usepackage[round]{natbib}
+
+\usepackage{mathtools}
+\usepackage{setspace} 
+\usepackage{dsfont}
+\usepackage{amsfonts}
+\usepackage{subcaption}
+\usepackage{paralist}
+%\usepackage{subfig}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usepackage{url}
+\usepackage{pgfplotstable}
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{lipsum,adjustbox}
+\usepackage[font={small}]{caption}
+\usetikzlibrary{positioning}
+\usepackage{bbm}
+
+%template additions
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+
+\usepackage{palatino} % Use the Palatino font by default
+
+\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+
+\addbibresource{propose.bib} % The filename of the bibliography
+
+\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+
+
+\graphicspath{{./plots/}}
+\newcommand{\com}[1]{}
+%\newcommand{\oa}[1]{}
+%\newcommand{\lc}[1]{}
+\newcommand{\oa}[1]{\footnote{\color{red}OA: #1}}
+\newcommand{\lc}[1]{\footnote{\color{blue}LC: #1}}
+\newcommand{\newcite}[1]{\citeauthor{#1} (\citeyear{#1})}
+\newcommand{\justcite}[1]{ (\cite{#1})}
+\com{
+	\makeatletter
+	\newcommand{\@BIBLABEL}{\@emptybiblabel}
+	\newcommand{\@emptybiblabel}[1]{}
+	%\makeatother
+	\usepackage[hidelinks]{hyperref}
+}
+
+\newenvironment{myequation}{
+	\begin{equation}
+}{
+\end{equation}
+}
+\newenvironment{myequation*}{
+	\begin{equation*}
+}{
+\end{equation*}
+}
+
+%----------------------------------------------------------------------------------------
+%	MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	inner=2.5cm, % Inner margin
+	outer=3.8cm, % Outer margin
+	bindingoffset=.5cm, % Binding offset
+	top=1.5cm, % Top margin
+	bottom=1.5cm, % Bottom margin
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{Language families from a computational perspective} % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+\supervisor{Dr. Eithan Grossman} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
+\examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
+\degree{Report} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
+\author{Leshem \textsc{Choshen}} % Your name, this is used in the title page and abstract, print it elsewhere with \authorname
+\addresses{} % Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
+
+\subject{Computational Linguistics} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
+\keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
+\university{\href{http://new.huji.ac.il/en}{Hebrew University}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
+\department{} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+\group{} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
+\faculty{\href{http://www.hum.huji.ac.il/english/}{Faculty Of Humanities}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+
+\AtBeginDocument{
+	\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+	\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+	\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+}
+
+\begin{document}
+	\frontmatter
+	\pagestyle{plain}
+	%\title{Thesis: Conservatism and Over-conservatism in Grammatical Error Correction}
+	%\author{
+	%  Leshem Choshen\textsuperscript{1} and Omri Abend\textsuperscript{2} \\
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+	\begin{center}
+		
+		\vspace*{.06\textheight}
+		{\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
+		\textsc{\Large Report}\\[0.5cm] % Thesis type
+		
+		\HRule \\[0.4cm] % Horizontal line
+		{\LARGE \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+		\HRule \\[1.5cm] % Horizontal line
+		
+		\begin{minipage}[t]{0.4\textwidth}
+			\begin{flushleft} \large
+				\emph{Author:}\\
+				\authorname % Author name - remove the \href bracket to remove the link
+			\end{flushleft}
+		\end{minipage}
+		\begin{minipage}[t]{0.4\textwidth}
+			\begin{flushright} \large
+				\emph{For:} \\
+				\href{http://huji.academia.edu/EitanGrossman}{\supname}\\ % Supervisor
+				\href{http://rggu.academia.edu/DmitryNikolaev}{Dmitry Nikolaev} 
+			\end{flushright}
+		\end{minipage}\\[0.5cm]
+		
+		\vfill
+		
+		\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename} % University requirement text
+		\textit{in the}\\[0.4cm]
+		%\groupname\\\deptname\\[1cm] % Research group name and department name
+		
+		\vfill
+		
+		{\large \today}\\[1cm] % Date
+		%\includegraphics{Logo} % University/department logo - uncomment to place it
+		
+		\vfill
+	\end{center}
+\end{titlepage}
+\com{
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{declaration}
+	\addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
+	\noindent I, \authorname, declare that this thesis titled, \enquote{\ttitle} and the work presented in it are my own. I confirm that:
+	
+	\begin{itemize} 
+		\item This work was done wholly or mainly while in candidature for a research degree at this University.
+		\item Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
+		\item Where I have consulted the published work of others, this is always clearly attributed.
+		\item Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this thesis is entirely my own work.
+		\item I have acknowledged all main sources of help.
+		\item Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
+	\end{itemize}
+	\com{
+	\noindent Signed:\\
+	\rule[0.5em]{25em}{0.5pt} % This prints a line for the signature
+	
+	\noindent Date:\\
+	\rule[0.5em]{25em}{0.5pt} % This prints a line to write the date
+}
+\end{declaration}
+
+\cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+\vspace*{0.2\textheight}
+
+\noindent\enquote{\itshape Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I got a good job in journalism.}\bigbreak
+
+\hfill Dave Barry
+}
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+	\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+	Grammatical Error Correction systems (henceforth, {\it correctors}) aim to correct ungrammatical text,
+	while changing it as little as possible. However, whereas such conservatism is a virtue for correctors,
+	we find that state-of-the-art systems make substantially less changes to the source sentences than needed.
+	Analyzing the distribution of possible corrections for a given sentence,   
+	we show that this over-conservatism likely stems from
+	the inability of a handful of reference corrections to account for the full variation of valid
+	corrections for a given sentence. This results in undue penalization of valid corrections,
+	thus disincentivizing correctors to make changes.
+	We also show that simply increasing the number of references is unlikely to resolve this problem,
+	and conclude by presenting an alternative reference-less approach based on semantic similarity.
+\end{abstract}
+\com{
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+	\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
+	The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
+\end{acknowledgements}
+}
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+\listoffigures % Prints the list of figures
+
+\listoftables % Prints the list of tables
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{thesis}
+\chapter{Introduction}
+\end{document}
