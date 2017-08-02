@@ -4,7 +4,8 @@
 # In[1]:
 import os
 import sys
-sys.path.append("/home/borgr/clustering/eurasian-phonologies/src/")
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/eurasian-phonologies/src/")
 import platform
 from subprocess import call
 import subprocess
@@ -18,19 +19,21 @@ from itertools import product
 import re
 from functools import reduce
 import json
+import pickle
 import inspect
+# print (inspect.stack()[0][3])
 import metric_learn as ml
 from IPAParser import parsePhon
 import scipy.spatial.distance as spdist
-import rpy2.robjects as robjects
-from rpy2.robjects import r, pandas2ri
+# import rpy2.robjects as robjects
+# from rpy2.robjects import r, pandas2ri
 NAME = "name"
 GROUP ='group'
 LAT = 'lat'
 LON ='lon'
 INV = "inv"
 PARSED = "parsed"
-
+FILE_PATH = os.path.dirname(os.path.realpath(__file__))
 
 def escape_print(s): 
     print(s.encode('unicode_escape'))
@@ -165,7 +168,7 @@ def parse(inv_file="", feature_file="", base_file=""):
         row = binary_df_pure[binary_df_pure[NAME] == key]
         inv = [name for name in all_phons if int(row[name]) != 0]
         parsed = parseInv(set(inv))
-        base_db.append((key, row[LON], row[LAT], row[GROUP], inv, parsed))
+        base_db.append((key, row.get_value(0, LON), row.get_value(0, LAT), row.get_value(0, GROUP), inv, parsed))
 
     # create a db containing binarized inventories 
     inv_db = binary_df_pure.copy()
@@ -235,12 +238,18 @@ def flatten_parse(parse):
     return frozenset(content)
 
 
-
-
 def to_comparable_array(row):
     """ gets a row of inventory db and returns only the inventory"""
 
-    return np.array(row[~row.index.isin([NAME,LAT,LON,GROUP])], np.bool)
+    return np.array(row[~row.index.isin([NAME,LAT,LON,GROUP])], np.float64)
+
+
+def create_col_remover(indexes):
+    if type(indexes) != type([]):
+        indexes = [indexes]
+    def remover(row):
+        return np.array(row[~row.index.isin(indexes)])
+    return remover
 
 
 def get_parsed(row):
@@ -392,7 +401,11 @@ def learn_metric_by_diffs(db, extract, learning_algorithm, train_percentage=10):
     return learning_algorithm.fit(np.array(x), (As, Bs, Cs, Ds))
 
 
-def learn_metric(db, extract, learning_algorithm, train_percentage=10):
+def train_model(db, extract, learning_algorithm, train_percentage=10, save=""):
+    if save and os.path.isfile(save):
+        print("reading", save)
+        with open(save, "rb") as fl:
+            return pickle.load(fl)
     x = []
     y = []
     names = []
@@ -408,8 +421,25 @@ def learn_metric(db, extract, learning_algorithm, train_percentage=10):
         if not found:
             names.append(cur_name)
             y.append(len(names))
-    return learning_algorithm.fit(np.array(x), np.array(y))
 
+    model = learning_algorithm.fit(np.array(x), np.array(y))
+    if save:
+        with open(save, "wb") as fl:
+            pickle.dump(model, fl)
+    return model
+
+def to_numerical_classes(srs):
+    contents = []
+    for idx, (name, cur_content) in enumerate(srs.iteritems()):
+        found = False
+        for i, content in enumerate(contents):
+            if content == cur_content:
+                srs[name] = i
+                found = True
+        if not found:
+            contents.append(cur_content)
+            srs[name] = len(contents)
+    return srs
 
 def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
     """ gets a db and a function and calculate the distance metrics"""
@@ -427,48 +457,129 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
     d = {}
     sort_by = np.argsort(db[GROUP])
     db = db.iloc[sort_by, :]
+    cache_normalize = {}
     for i, r in db.iterrows():
+        if i not in cache_normalize:
+            cache_normalize[i] = normalize(r)
         index = []
         distances = []
         for j, c in db.iterrows():
-            if i != j and all(normalize(r) == normalize(c)):
-                print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, normalize(r), normalize(c))
+            if j not in cache_normalize:
+                cache_normalize[j] = normalize(c)
+            if i != j and cache_normalize[i] == cache_normalize[j]:
+                print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, cache_normalize[i], cache_normalize[j])
             index.append(c[NAME])
-            distances.append(func(normalize(r), normalize(c)))
+            # print(cache_normalize[i], cache_normalize[j])
+            # print(func(cache_normalize[i], cache_normalize[j]))
+            distances.append(func(cache_normalize[i], cache_normalize[j]))
         d[r[NAME]] = pd.Series(distances, index=index)
     res = pd.DataFrame(d)[index]
     if save:
-        path, basename = os.path.split(save)    
+        path, basename = os.path.split(save) 
+        cluster_filename = path + os.sep + "../clusters/" + basename   
         if save.endswith("csv"):
             res.to_csv(save)
-            db[GROUP].to_csv(path + os.sep + "../clusters/" + basename)
-            print(path + os.sep + "../clusters/" + basename)
+            to_numerical_classes(db[GROUP]).to_csv(cluster_filename, header=True)
+            print(cluster_filename)
         elif save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
             res.to_pickle(save)
-            db[GROUP].to_pickle(path + os.sep + "../clusters/" + basename)
+            to_numerical_classes(db[GROUP]).to_pickle(cluster_filename, header=True)
         elif save.endswith("json"):
             res.to_json(save)
-            db[GROUP].to_json(path + os.sep + "../clusters/" + basename)
+            to_numerical_classes(db[GROUP]).to_json(cluster_filename, header=True)
         else:
             print("unknown file extension")
     return res
 
 
-def main():
-    # print(parse())
-    # initialize directories
+def create_learned_distance_matrix(db,  learning_algorithm, train_percentage, normalize=lambda x:x, save="", save_model=""):
+    model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
+    print("calculated model ", save_model)
+    comparable_db = np.array([normalize(row) for i, (name, row) in enumerate(db.iterrows())])
+    frame = pd.DataFrame(model.transform(comparable_db), index=db.index.values)
+    frame[[GROUP,NAME]] = db.loc[frame.index.values].loc[:, [GROUP, NAME]].astype(str)
+    create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
 
-    file_path = os.path.dirname(os.path.realpath(__file__))
-    path = file_path + os.sep + "cache" + os.sep
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    dist_dir = file_path + "/distance_metrics/"
+
+def find_best_features(db, learning_algorithm, train_percentage=100, normalize=lambda x:x, save="", save_model=""):
+    model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
+    print("calculated model ", save_model)
+    print("features chosen:", model.support_)
+    print("feature ranking:", model.ranking_)
+
+
+def calculate_distances_main(inv_db, feature_db, base_db):
+    dist_dir = FILE_PATH + "/distance_metrics/"
     if not os.path.isdir(dist_dir):
         os.mkdir(dist_dir)
-    clust_dir = file_path + "/clusters/"
+    clust_dir = FILE_PATH + "/clusters/"
     if not os.path.isdir(clust_dir):
         os.mkdir(clust_dir)
+    models_dir = FILE_PATH + "/models/"
+    if not os.path.isdir(models_dir):
+        os.mkdir(models_dir)
 
+    train_percentage = 50
+
+    # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
+    # prior = np.random.rand(number_of_features, number_of_features)
+    # prior = np.dot(prior, prior.transpose())
+    # print(np.random.rand(number_of_features, number_of_features))
+    # save_lsml = "lsml_inv"
+    # lsml = create_learned_distance_matrix(inv_db, ml.LSML_Supervised(prior=prior), train_percentage, to_comparable_array, clust_dir + save_lsml, models_dir + save_lsml)
+
+    # save_sdml = "sdml_inv"
+    # sdml = create_learned_distance_matrix(inv_db, ml.SDML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_sdml, models_dir + save_sdml)
+
+    # save_lmnn = "lmnn_inv"
+    # lmnn = create_learned_distance_matrix(inv_db, ml.LMNN(k=5, learn_rate=1e-6), train_percentage, to_comparable_array, clust_dir + save_lmnn, models_dir + save_lmnn)
+
+    # save_nca = "nca_inv"
+    # nca = create_learned_distance_matrix(inv_db, ml.NCA(), train_percentage, to_comparable_array, clust_dir + save_nca, models_dir + save_nca)
+
+    print("calculate over bigger training.")
+    # print("choose between different ml")
+    # print("ml with parsed")
+    print("R!")
+
+    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
+    create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
+    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
+    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv")
+    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
+    create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
+    create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
+    create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
+    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
+
+    save_rca = "rca_inv"
+    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, clust_dir + save_rca, models_dir + save_rca)
+
+    save_itml = "itml_inv"
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_itml, models_dir + save_itml)
+
+    # pandas2ri.activate()
+    # print(pandas2ri.py2ri(base_db))
+    
+    # anounce_finish()
+    print("try your own metrics (alignment, bag of features, bigrams)")
+    print("write about choices to separate euroasia to families")
+    print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
+
+def choose_features_main(inv_db, feature_db, base_db):
+    gram_db = create_ngrams(base_db, 1)
+    gram_db = create_ngrams(base_db, 2)
+    find_best_features(inv_db, estimator, to_comparable_array)
+    find_best_features(base_db, estimator, get_parsed)
+    find_best_features(base_db, estimator, bag_of_features_getter(1))
+    find_best_features(base_db, estimator, bag_of_features_getter(2))
+
+
+def main():
+    path = FILE_PATH + os.sep + "cache" + os.sep
+    if not os.path.isdir(path):
+        os.mkdir(path)
+    # initialize directories
     inv_file = path + "inv.pckl"
     feature_file = path + "features.pckl"
     base_file = path + "base.pckl"
@@ -483,40 +594,9 @@ def main():
     
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
-    # print(inv_db)
-    # print(sorted(list(inv_db[NAME])))
-    # print(base_db[ base_db[NAME] == "Abkhaz (Bzyb)#95"][INV])
-    # return
-    print("calculate over bigger training.")
-    print("export ml calculations to a file")
-    print("choose between different ml")
-    print("ml with parsed")
-    print("R!")
-    # itml = learn_metric(inv_db, to_comparable_array, ml.ITML_Supervised(), train_percentage=5)
-    # print("calculated model")
-    # comparable_inv = np.array([to_comparable_array(row) for i, row in inv_db.iterrows()])
-    # pd.DataFrame(itml.transform(), index=inv_db.index.values, columns = inv_db.index.values).to_csv(dist_dir + "inv_itml.csv")
-    # lmnn_metric = learn_metric(inv_db, to_comparable_array, ml.LMNN(k=5, learn_rate=1e-6))
-    # print("calculated model")
-    # print(lmnn_metric.transform())
 
-    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
-    create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
-    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
-    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv")
-    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x,y,2,spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
-    create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
-    create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
-    create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
-    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
+    calculate_distances_main(inv_db, feature_db, base_db)
+    choose_features_main(inv_db, feature_db, base_db)
 
-
-    # pandas2ri.activate()
-    # print(pandas2ri.py2ri(base_db))
-    
-    # anounce_finish()
-    print("try your own metrics (alignment, bag of features, bigrams)")
-    print("write about choices to separate euroasia to families")
-    print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
 if __name__ == '__main__':
     main()
