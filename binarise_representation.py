@@ -413,7 +413,6 @@ def learn_metric_by_diffs(db, extract, learning_algorithm, train_percentage=10):
             Bs.append(i_b)
             Cs.append(i_c)
             Ds.append(i_d)
-            # print(y[i_a], y[i_b], y[i_c], y[i_d])
 
     return learning_algorithm.fit(np.array(x), (As, Bs, Cs, Ds))
 
@@ -440,8 +439,6 @@ def train_model(db, extract, learning_algorithm, train_percentage=10, save=""):
         if not found:
             y.append(len(names))
             names.append(cur_name)
-    # print("x,y")
-    # print(np.array(x), np.array(y))
     model = learning_algorithm.fit(np.array(x), np.array(y))
     if save:
         with open(save, "wb") as fl:
@@ -497,8 +494,6 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
             if i != j and same_normalization:
                 print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, cache_normalize[i], cache_normalize[j])
             index.append(c[NAME])
-            # print(cache_normalize[i], cache_normalize[j])
-            # print(func(cache_normalize[i], cache_normalize[j]))
             distances.append(func(cache_normalize[i], cache_normalize[j]))
         d[r[NAME]] = pd.Series(distances, index=index)
     res = pd.DataFrame(d)[index]
@@ -550,18 +545,22 @@ def create_learned_distance_matrix(db, learning_algorithm, train_percentage, nor
     create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
 
 
-def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_percentage=100, save="", save_model=""):
-    # model = train_model(db, normalize, RFECV(learning_algorithm), train_percentage, save_model)
-    # print("calculated model ", save_model)
-    # print("feature names:", normalize(db.iloc[1,:], True))
-    # print("features chosen:", model.support_)
-    # print("feature ranking:", model.ranking_)
-
-    model = train_model(db, normalize, RFE(learning_algorithm, 1), train_percentage, save_model)
-    sort = np.argsort(model.ranking_)
-    print("calculated model ", save_model)
-    print("feature names ordered by usefulness:", list(np.array(normalize(db.iloc[1,:], True))[sort]))
-    # print("features chosen:", list(model.support_[sort]))
+def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_percentage=100, save="", save_model="", cross_validate=False):
+    if cross_validate:
+        model = train_model(db, normalize, RFECV(learning_algorithm), train_percentage, save_model)
+        sort = np.argsort(model.ranking_)
+        print("calculated model ", save_model)
+        print("feature names ordered by usefulness:", list(np.array(normalize(db.iloc[1,:], True))[sort]))
+        print("features chosen:", list(model.support_[sort]))
+        print("feature ranking:", model.ranking_[sort])
+        # print("feature names:", normalize(db.iloc[1,:], True))
+        # print("features chosen:", model.support_)
+    else:
+        model = train_model(db, normalize, RFE(learning_algorithm, 1), train_percentage, save_model)
+        sort = np.argsort(model.ranking_)
+        print("calculated model ", save_model)
+        print("feature names ordered by usefulness:", list(np.array(normalize(db.iloc[1,:], True))[sort]))
+        # print("features chosen:", list(model.support_[sort]))
 
 
 def calculate_distances_main(inv_db, feature_db, base_db):
@@ -577,10 +576,10 @@ def calculate_distances_main(inv_db, feature_db, base_db):
 
     train_percentage = 50
 
+    """ metric learning """
     # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
     # prior = np.random.rand(number_of_features, number_of_features)
     # prior = np.dot(prior, prior.transpose())
-    # print(np.random.rand(number_of_features, number_of_features))
     # save_lsml = "lsml_inv"
     # lsml = create_learned_distance_matrix(inv_db, ml.LSML_Supervised(prior=prior), train_percentage, to_comparable_array, clust_dir + save_lsml, models_dir + save_lsml)
 
@@ -592,11 +591,6 @@ def calculate_distances_main(inv_db, feature_db, base_db):
 
     # save_nca = "nca_inv"
     # nca = create_learned_distance_matrix(inv_db, ml.NCA(), train_percentage, to_comparable_array, clust_dir + save_nca, models_dir + save_nca)
-
-    # print("calculate over bigger training.")
-    # print("choose between different ml")
-    # print("ml with parsed")
-    # print("R!")
 
     # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
