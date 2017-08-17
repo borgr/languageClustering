@@ -25,7 +25,10 @@ import inspect
 import metric_learn as ml
 from IPAParser import parsePhon
 import scipy.spatial.distance as spdist
+from sklearn import linear_model
+from sklearn.feature_selection import RFECV, RFE
 # import rpy2.robjects as robjects
+
 # from rpy2.robjects import r, pandas2ri
 NAME = "name"
 GROUP ='group'
@@ -33,6 +36,7 @@ LAT = 'lat'
 LON ='lon'
 INV = "inv"
 PARSED = "parsed"
+GRAM_NAME = "gram"
 FILE_PATH = os.path.dirname(os.path.realpath(__file__))
 
 def escape_print(s): 
@@ -238,9 +242,10 @@ def flatten_parse(parse):
     return frozenset(content)
 
 
-def to_comparable_array(row):
+def to_comparable_array(row, names=False):
     """ gets a row of inventory db and returns only the inventory"""
-
+    if names:
+        return row.index.values[~row.index.isin([NAME,LAT,LON,GROUP])]
     return np.array(row[~row.index.isin([NAME,LAT,LON,GROUP])], np.float64)
 
 
@@ -260,11 +265,23 @@ def get_parsed(row):
     return res
 
 
+def bag_of_features_getter(n):
+    def get_ngrams(row, names=False):
+        res = []
+        for key in row.index.values:
+            if key.startswith(str(n) + GRAM_NAME):
+                if names:
+                    res.append(key[len(str(n)+GRAM_NAME):])
+                else:
+                    res.append(row[key])
+        return res
+    return get_ngrams
+
+
 def counting_feature_dist(feature_set_a, feature_set_b):
     return (sum([1 for a in feature_set_a if a not in feature_set_b]) + 
             sum([1 for b in feature_set_b if b not in feature_set_a])) / (
             len(feature_set_a) + len(feature_set_b))
-
 
 
 def aligning_dist(a, b, dist=counting_feature_dist):
@@ -396,7 +413,7 @@ def learn_metric_by_diffs(db, extract, learning_algorithm, train_percentage=10):
             Bs.append(i_b)
             Cs.append(i_c)
             Ds.append(i_d)
-            print(y[i_a], y[i_b], y[i_c], y[i_d])
+            # print(y[i_a], y[i_b], y[i_c], y[i_d])
 
     return learning_algorithm.fit(np.array(x), (As, Bs, Cs, Ds))
 
@@ -411,6 +428,7 @@ def train_model(db, extract, learning_algorithm, train_percentage=10, save=""):
     names = []
     for i, row in zip(range(int(train_percentage * db.shape[0] / 100)), genidx(0, db.shape[0] - 1)):
         x.append(extract(db.iloc[row]))
+        # print(x[-1])
         cur_name = db.iloc[row][GROUP]
         # find place without iterating twice on the list
         found = False
@@ -418,15 +436,18 @@ def train_model(db, extract, learning_algorithm, train_percentage=10, save=""):
             if name == cur_name:
                 y.append(i)
                 found = True
+                break
         if not found:
-            names.append(cur_name)
             y.append(len(names))
-
+            names.append(cur_name)
+    # print("x,y")
+    # print(np.array(x), np.array(y))
     model = learning_algorithm.fit(np.array(x), np.array(y))
     if save:
         with open(save, "wb") as fl:
             pickle.dump(model, fl)
     return model
+
 
 def to_numerical_classes(srs):
     contents = []
@@ -434,12 +455,13 @@ def to_numerical_classes(srs):
         found = False
         for i, content in enumerate(contents):
             if content == cur_content:
-                srs[name] = i
+                srs[name] = i + 1
                 found = True
         if not found:
+            srs[name] = len(contents) + 1
             contents.append(cur_content)
-            srs[name] = len(contents)
     return srs
+
 
 def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
     """ gets a db and a function and calculate the distance metrics"""
@@ -466,7 +488,11 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
         for j, c in db.iterrows():
             if j not in cache_normalize:
                 cache_normalize[j] = normalize(c)
-            if i != j and cache_normalize[i] == cache_normalize[j]:
+            try:
+                same_normalization = all(cache_normalize[i] == cache_normalize[j])
+            except:
+                same_normalization = cache_normalize[i] == cache_normalize[j]
+            if i != j and same_normalization:
                 print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, cache_normalize[i], cache_normalize[j])
             index.append(c[NAME])
             # print(cache_normalize[i], cache_normalize[j])
@@ -492,7 +518,28 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
     return res
 
 
-def create_learned_distance_matrix(db,  learning_algorithm, train_percentage, normalize=lambda x:x, save="", save_model=""):
+def create_ngrams(db, n):
+    unigrams = Counter()
+    for i, row in db.iterrows():
+        for item in get_parsed(row):
+            unigrams.update(item)
+    ngrams = list(product(unigrams, repeat=n))
+    names = [str(n)+GRAM_NAME+str(gram)[1:-1].replace("'","") for gram in ngrams]
+    res = []
+    for i, row in db.iterrows():
+        lst = [i]
+        parsed = get_parsed(row)
+        for name, item in zip(names, ngrams):
+            item = set(item)
+            lst.append(len([1 for phoneme in parsed if len(phoneme & item) == n]))
+        res.append(lst)
+    res = pd.DataFrame(res, columns=[NAME] + names)
+    res.set_index(NAME, drop=False, inplace=True)
+    res = pd.concat([res,db.loc[:,[NAME, GROUP]]], axis=1)
+    return res
+
+
+def create_learned_distance_matrix(db, learning_algorithm, train_percentage, normalize=lambda x:x, save="", save_model=""):
     model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
     print("calculated model ", save_model)
     comparable_db = np.array([normalize(row) for i, (name, row) in enumerate(db.iterrows())])
@@ -501,11 +548,18 @@ def create_learned_distance_matrix(db,  learning_algorithm, train_percentage, no
     create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
 
 
-def find_best_features(db, learning_algorithm, train_percentage=100, normalize=lambda x:x, save="", save_model=""):
-    model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
+def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_percentage=100, save="", save_model=""):
+    # model = train_model(db, normalize, RFECV(learning_algorithm), train_percentage, save_model)
+    # print("calculated model ", save_model)
+    # print("feature names:", normalize(db.iloc[1,:], True))
+    # print("features chosen:", model.support_)
+    # print("feature ranking:", model.ranking_)
+
+    model = train_model(db, normalize, RFE(learning_algorithm, 1), train_percentage, save_model)
+    sort = np.argsort(model.ranking_)
     print("calculated model ", save_model)
-    print("features chosen:", model.support_)
-    print("feature ranking:", model.ranking_)
+    print("feature names ordered by usefulness:", list(np.array(normalize(db.iloc[1,:], True))[sort]))
+    # print("features chosen:", list(model.support_[sort]))
 
 
 def calculate_distances_main(inv_db, feature_db, base_db):
@@ -543,10 +597,10 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     print("R!")
 
     # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
+    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
     create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
     create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
     create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv")
-    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
     create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
     create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
@@ -566,13 +620,20 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     print("write about choices to separate euroasia to families")
     print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
 
+
 def choose_features_main(inv_db, feature_db, base_db):
+    estimator = linear_model.LogisticRegression()
+    # find_best_features(base_db, estimator, get_parsed)
     gram_db = create_ngrams(base_db, 1)
+    find_best_features(gram_db, estimator, bag_of_features_getter(1))
     gram_db = create_ngrams(base_db, 2)
+    find_best_features(gram_db, estimator, bag_of_features_getter(2))
     find_best_features(inv_db, estimator, to_comparable_array)
-    find_best_features(base_db, estimator, get_parsed)
-    find_best_features(base_db, estimator, bag_of_features_getter(1))
-    find_best_features(base_db, estimator, bag_of_features_getter(2))
+
+
+def clean_rare(db, col, mincount=5):
+    counts = db[col].value_counts()
+    return db[db[col].isin(counts[counts >= mincount].index.values)]
 
 
 def main():
@@ -584,6 +645,8 @@ def main():
     feature_file = path + "features.pckl"
     base_file = path + "base.pckl"
     inv_db, feature_db, base_db = parse(inv_file, feature_file, base_file)
+    inv_db = clean_rare(inv_db, GROUP)
+    base_db = clean_rare(base_db, GROUP)
     # def tmp(r):
     #     # print("row",r)
     #     r[INV] = frozenset(r[INV])
@@ -595,8 +658,10 @@ def main():
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
 
-    calculate_distances_main(inv_db, feature_db, base_db)
+    # choose_features_main(inv_db, feature_db, base_db)
+    # choose_features_main(inv_db, feature_db, base_db)
     choose_features_main(inv_db, feature_db, base_db)
+    # calculate_distances_main(inv_db, feature_db, base_db)
 
 if __name__ == '__main__':
     main()
