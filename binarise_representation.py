@@ -576,6 +576,9 @@ def calculate_distances_main(inv_db, feature_db, base_db):
 
     train_percentage = 50
 
+    #### run on small db ###
+    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
+
     """ metric learning """
     # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
     # prior = np.random.rand(number_of_features, number_of_features)
@@ -592,7 +595,13 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     # save_nca = "nca_inv"
     # nca = create_learned_distance_matrix(inv_db, ml.NCA(), train_percentage, to_comparable_array, clust_dir + save_nca, models_dir + save_nca)
 
-    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
+    save_rca = "rca_inv.csv"
+    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, clust_dir + save_rca, models_dir + save_rca)
+
+    save_itml = "itml_inv.csv"
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_itml, models_dir + save_itml)
+
+    """ hand made distances """
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
     create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
     create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
@@ -602,19 +611,7 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
     create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
 
-    save_rca = "rca_inv.csv"
-    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, clust_dir + save_rca, models_dir + save_rca)
-
-    save_itml = "itml_inv.csv"
-    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_itml, models_dir + save_itml)
-
-    # pandas2ri.activate()
-    # print(pandas2ri.py2ri(base_db))
-    
-    # anounce_finish()
-    # print("try your own metrics (alignment, bag of features, bigrams)")
-    print("write about choices to separate euroasia to families")
-    # print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
+    anounce_finish()
 
 
 def choose_features_main(inv_db, feature_db, base_db):
@@ -643,13 +640,6 @@ def main():
     inv_db, feature_db, base_db = parse(inv_file, feature_file, base_file)
     inv_db = clean_rare(inv_db, GROUP)
     base_db = clean_rare(base_db, GROUP)
-    # def tmp(r):
-    #     # print("row",r)
-    #     r[INV] = frozenset(r[INV])
-    #     return r
-    # base_db.apply(tmp, axis=1)
-    # print(len(base_db[INV]))
-    # print(len(base_db.drop_duplicates(INV)))
     
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
