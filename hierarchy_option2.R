@@ -1,9 +1,6 @@
 library(cluster)
 library(RColorBrewer)
 
-metric.paths <- list.files("distance_metrics", pattern="*.csv", full.names = TRUE)
-res <-lapply(metric.paths, plot_diana)
-
 ## Now color the inner dendrogram edges
 color_dendro <- function(node, colormap){
   if(is.leaf(node)){
@@ -53,9 +50,16 @@ colormap
 dnd.colored <- dendrapply(dnd, color_dendro, colormap = colormap)
 
 ## Plot the dendrogram
-print(paste("plotting to ",paste("plots/", filename)))
-png(paste("plots/", filename, sep = ""))
-plot(dnd.colored)
+distance.name <- tools::file_path_sans_ext(filename)
+imagename <- tools::file_path_sans_ext(filename)
+imagename <- paste(imagename, ".svg", sep = "")
+print(paste("plotting to ",paste("plots/", imagename, sep = "")))
+png(paste("plots/", imagename, sep = ""), width=10,height=10,units="cm",res=900, pointsize=2)
+# svg(filename=paste("plots/", imagename, sep = ""), width=1024, height=800)
+plot(dnd.colored, main = distance.name)
 dev.off()
 }
+
+metric.paths <- list.files("distance_metrics", pattern="*.csv", full.names = TRUE)
+res <-lapply(metric.paths, plot_diana)
 
