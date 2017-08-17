@@ -451,6 +451,8 @@ def train_model(db, extract, learning_algorithm, train_percentage=10, save=""):
 
 def to_numerical_classes(srs):
     contents = []
+    origin = srs.copy()
+    origin.name = "names"
     for idx, (name, cur_content) in enumerate(srs.iteritems()):
         found = False
         for i, content in enumerate(contents):
@@ -460,7 +462,7 @@ def to_numerical_classes(srs):
         if not found:
             srs[name] = len(contents) + 1
             contents.append(cur_content)
-    return srs
+    return pd.concat([origin, srs], axis=1)
 
 
 def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
@@ -591,10 +593,10 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     # save_nca = "nca_inv"
     # nca = create_learned_distance_matrix(inv_db, ml.NCA(), train_percentage, to_comparable_array, clust_dir + save_nca, models_dir + save_nca)
 
-    print("calculate over bigger training.")
+    # print("calculate over bigger training.")
     # print("choose between different ml")
     # print("ml with parsed")
-    print("R!")
+    # print("R!")
 
     # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
@@ -606,19 +608,19 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
     create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
 
-    save_rca = "rca_inv"
+    save_rca = "rca_inv.csv"
     rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, clust_dir + save_rca, models_dir + save_rca)
 
-    save_itml = "itml_inv"
+    save_itml = "itml_inv.csv"
     itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_itml, models_dir + save_itml)
 
     # pandas2ri.activate()
     # print(pandas2ri.py2ri(base_db))
     
     # anounce_finish()
-    print("try your own metrics (alignment, bag of features, bigrams)")
+    # print("try your own metrics (alignment, bag of features, bigrams)")
     print("write about choices to separate euroasia to families")
-    print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
+    # print("try learning a metric https://all-umass.github.io/metric-learn/metric_learn.lmnn.html")
 
 
 def choose_features_main(inv_db, feature_db, base_db):
@@ -658,10 +660,8 @@ def main():
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
 
-    # choose_features_main(inv_db, feature_db, base_db)
-    # choose_features_main(inv_db, feature_db, base_db)
+    calculate_distances_main(inv_db, feature_db, base_db)
     choose_features_main(inv_db, feature_db, base_db)
-    # calculate_distances_main(inv_db, feature_db, base_db)
 
 if __name__ == '__main__':
     main()
