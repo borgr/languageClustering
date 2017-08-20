@@ -471,10 +471,11 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
         if save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
             res = pd.read_pickle(save)
         if save.endswith("json"):
-            res = pd.read_json(save)  
+            res = pd.read_json(save) 
         return res 
 
     print("calculating distance matrix")   
+    # print(db)
     d = {}
     sort_by = np.argsort(db[GROUP])
     db = db.iloc[sort_by, :]
@@ -500,10 +501,10 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
     if save:
         path, basename = os.path.split(save) 
         cluster_filename = path + os.sep + "../clusters/" + basename   
+        print(cluster_filename)
         if save.endswith("csv"):
             res.to_csv(save)
             to_numerical_classes(db[GROUP]).to_csv(cluster_filename, header=True)
-            print(cluster_filename)
         elif save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
             res.to_pickle(save)
             to_numerical_classes(db[GROUP]).to_pickle(cluster_filename, header=True)
@@ -540,6 +541,8 @@ def create_learned_distance_matrix(db, learning_algorithm, train_percentage, nor
     model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
     print("calculated model ", save_model)
     comparable_db = np.array([normalize(row) for i, (name, row) in enumerate(db.iterrows())])
+    # print(comparable_db)
+    # print(model.transform(comparable_db))
     frame = pd.DataFrame(model.transform(comparable_db), index=db.index.values)
     frame[[GROUP,NAME]] = db.loc[frame.index.values].loc[:, [GROUP, NAME]].astype(str)
     create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
@@ -595,11 +598,13 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     # save_nca = "nca_inv"
     # nca = create_learned_distance_matrix(inv_db, ml.NCA(), train_percentage, to_comparable_array, clust_dir + save_nca, models_dir + save_nca)
 
+    # rca = create_learned_distance_matrix(inv_db.iloc[:14,:], ml.RCA_Supervised(num_chunks=4), 100, to_comparable_array, dist_dir + "tmp.csv", "")
+
     save_rca = "rca_inv.csv"
-    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, clust_dir + save_rca, models_dir + save_rca)
+    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, dist_dir + save_rca, models_dir + save_rca)
 
     save_itml = "itml_inv.csv"
-    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, clust_dir + save_itml, models_dir + save_itml)
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml)
 
     """ hand made distances """
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
@@ -611,7 +616,7 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
     create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
 
-    anounce_finish()
+    # anounce_finish()
 
 
 def choose_features_main(inv_db, feature_db, base_db):
