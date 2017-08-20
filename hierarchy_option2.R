@@ -38,12 +38,8 @@ dnd <- as.dendrogram(clust)
 dnd <- dendrapply(dnd, rectify_labels, df = clusters.factor)
 
 ## Create a color palette as a data.frame with one row for each spp
-# irisspp <- as.character(unique(iris$Species))
-# iris.colormap <- data.frame(Species = irisspp, color = rainbow(n = length(irisspp)))
-# iris.colormap[, 2] <- c("red", "blue", "green")
 uniqspp <- as.character(unique(clusters.factor))
 colormap <- data.frame(Species = uniqspp, color = rainbow(n = length(uniqspp)))
-# colormap[, 2] <- c("red", "blue", "green")
 colormap[, 2] <- c( "blue", "green", "red", "cadetblue1", "deeppink", "lightsalmon4","gray1","khaki1", "lightcoral", "chartreuse", "aquamarine", "chocolate", "azure3", "darkorange" ,"coral2", "blueviolet", "darkgoldenrod", "brown", "darkgreen", "deepskyblue")
 colormap
 
