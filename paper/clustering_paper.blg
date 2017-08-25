@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: clustering_paper.aux
+The style file: acl2012.bst
+Database file #1: cites.bib
+`year' is a missing field, not a string, for entry mohammadi2comparative
+while executing---line 2625 of file acl2012.bst
+Warning--empty year in mohammadi2comparative
+`year' is a missing field, not a string, for entry Nikolaev2015database
+while executing---line 2625 of file acl2012.bst
+Warning--empty year in Nikolaev2015database
+Warning--empty journal in Nikolaev2015database
+You've used 9 entries,
+            2490 wiz_defined-function locations,
+            606 strings with 6286 characters,
+and the built_in function-call counts, 3948 in all, are:
+= -- 410
+> -- 170
+< -- 3
++ -- 62
+- -- 58
+* -- 302
+:= -- 635
+add.period$ -- 35
+call.type$ -- 9
+change.case$ -- 63
+chr.to.int$ -- 9
+cite$ -- 12
+duplicate$ -- 166
+empty$ -- 281
+format.name$ -- 70
+if$ -- 820
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 10
+newline$ -- 54
+num.names$ -- 27
+pop$ -- 76
+preamble$ -- 1
+purify$ -- 73
+quote$ -- 0
+skip$ -- 127
+stack$ -- 0
+substring$ -- 190
+swap$ -- 44
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 68
+warning$ -- 3
+while$ -- 33
+width$ -- 11
+write$ -- 122
+(There were 2 error messages)
