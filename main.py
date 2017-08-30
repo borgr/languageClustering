@@ -692,7 +692,6 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
     if not os.path.isdir(models_dir):
         os.mkdir(models_dir)
 
-    train_percentage = 50
     evaluate_with = is_kurd
     evaluate_with = inv_db[GROUP]
     #### run on small db ###
@@ -734,9 +733,22 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
     # save_rca = "rca_inv.csv"
     # rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, dist_dir + save_rca, models_dir + save_rca)
 
+    train_percentage = 50
     save_itml = "itml_inv.csv"
     itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, evaluate_with)
     
+    train_percentage = 40
+    save_itml = train_percentage + "itml_inv.csv"
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, evaluate_with)
+ 
+    train_percentage = 30
+    save_itml = train_percentage + "itml_inv.csv"
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, evaluate_with)
+
+    train_percentage = 20
+    save_itml = train_percentage + "itml_inv.csv"
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, evaluate_with)
+ 
     # anounce_finish()
 
 

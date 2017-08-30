@@ -37,6 +37,12 @@ Jason~V Davis, Brian Kulis, Prateek Jain, Suvrit Sra, and Inderjit~S Dhillon.
 \newblock In {\em Proceedings of the 24th international conference on Machine
   learning}, pages 209--216. ACM.
 
+\bibitem[\protect\citename{Frey and Dueck}2007]{frey2007clustering}
+Brendan~J Frey and Delbert Dueck.
+\newblock 2007.
+\newblock Clustering by passing messages between data points.
+\newblock {\em science}, 315(5814):972--976.
+
 \bibitem[\protect\citename{Macklin-Cordes and Round}2015]{macklin2015high}
 Jayden~L Macklin-Cordes and Erich~R Round.
 \newblock 2015.

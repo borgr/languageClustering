@@ -10,45 +10,45 @@ Warning--empty year in mohammadi2comparative
 while executing---line 2625 of file acl2012.bst
 Warning--empty year in Nikolaev2015database
 Warning--empty journal in Nikolaev2015database
-You've used 10 entries,
+You've used 11 entries,
             2490 wiz_defined-function locations,
-            614 strings with 6537 characters,
-and the built_in function-call counts, 4382 in all, are:
-= -- 457
-> -- 188
+            621 strings with 6661 characters,
+and the built_in function-call counts, 4785 in all, are:
+= -- 502
+> -- 201
 < -- 3
-+ -- 68
-- -- 64
-* -- 340
-:= -- 707
-add.period$ -- 39
-call.type$ -- 10
-change.case$ -- 70
-chr.to.int$ -- 10
-cite$ -- 13
-duplicate$ -- 181
-empty$ -- 312
-format.name$ -- 77
-if$ -- 907
++ -- 72
+- -- 68
+* -- 374
+:= -- 771
+add.period$ -- 43
+call.type$ -- 11
+change.case$ -- 76
+chr.to.int$ -- 11
+cite$ -- 14
+duplicate$ -- 196
+empty$ -- 343
+format.name$ -- 83
+if$ -- 989
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 11
-newline$ -- 60
-num.names$ -- 30
-pop$ -- 81
+missing$ -- 12
+newline$ -- 66
+num.names$ -- 33
+pop$ -- 85
 preamble$ -- 1
-purify$ -- 81
+purify$ -- 88
 quote$ -- 0
-skip$ -- 137
+skip$ -- 149
 stack$ -- 0
-substring$ -- 220
-swap$ -- 46
+substring$ -- 250
+swap$ -- 48
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 76
+type$ -- 84
 warning$ -- 3
-while$ -- 37
-width$ -- 13
-write$ -- 136
+while$ -- 41
+width$ -- 14
+write$ -- 150
 (There were 2 error messages)
