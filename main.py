@@ -40,6 +40,7 @@ INV = "inv"
 PARSED = "parsed"
 GRAM_NAME = "gram"
 FILE_PATH = os.path.dirname(os.path.realpath(__file__))
+VERBOSE = False
 
 def escape_print(s): 
     print(s.encode('unicode_escape'))
@@ -276,7 +277,6 @@ def get_dists(row):
     return row[LAT], row[LON]
 
 
-
 def get_parsed(row):
     """creates a list of frozen sets from a base db row"""
     res = []
@@ -322,12 +322,14 @@ def calculate_distance_on_earth(pos1, pos2):
 
 def multi2multi_dist(a, b, dist=counting_feature_dist):
     """ sums the distances from each element in one language to its closest relative in the other"""
-    return multi2one_dist(a, b, dist) + multi2one_dist(b, a, dist)
+    res = multi2one_dist(a, b, dist) + multi2one_dist(b, a, dist)
+    assert(res != 0 or a == b)
+    return res
 
 
 def symmetric_multi2one_dist(a, b, dist=counting_feature_dist):
     """ sums minimal multi2one distances"""
-  return min(multi2one_dist(a, b, dist), multi2one_dist(b, a, dist))
+    return min(multi2one_dist(a, b, dist), multi2one_dist(b, a, dist))
 
 
 def multi2one_dist(a, b, dist=counting_feature_dist):
@@ -338,13 +340,14 @@ def multi2one_dist(a, b, dist=counting_feature_dist):
     b = list(b)
 
     assert(dist(a[0], frozenset())) == 1
-    dist = 0
+    total_dist = 0
     for elemA in a:
-        bestDist = float("inf")
+        best_dist = float("inf")
         for elemB in b:
-            bestDist = min(bestDist, dist(elemA, elemB))
-        dist += bestDist
-    return dist
+            phon_dist = dist(elemA, elemB)
+            best_dist = min(best_dist, phon_dist)
+        total_dist += best_dist
+    return total_dist
 
 def aligning_dist(a, b, dist=counting_feature_dist):
     """ sums the distances of the most closely related phonemes""" 
@@ -521,16 +524,37 @@ def to_numerical_classes(srs):
         if not found:
             srs[name] = len(contents) + 1
             contents.append(cur_content)
-    print(srs)
     return pd.concat([origin, srs], axis=1)
 
 
-def evaluate_clustering(symmat, truth):
+def evaluate_clustering(distmat, truth):
+    distmat = np.array(distmat)
+
+    # remove headers if needed
+    if type(distmat[0][0]) == type("string"):
+        distmat = distmat[:,1:]
+    max_val = np.amax(distmat)
+
+    if not (distmat.transpose() == distmat).all():
+        print("can't evaluate assymetric measures")
+        return
+
+    if max_val is None:
+        print("can't evaluate with Nones")
+        return
+    elif max_val > 1:
+        distmat = distmat / max_val
+
+    if max_val > 0 and distmat[0, 0] == 0:
+        symmat = 1 - distmat
+
     num_clusters = len(Counter(truth))
     true_clusters = to_numerical_classes(truth).drop("names", axis=1).iloc[:,0].as_matrix()
     model = cluster.SpectralClustering(n_clusters=num_clusters, affinity="precomputed")
     pred = model.fit_predict(symmat)
     print("clustering evaluation score", metrics.adjusted_rand_score(true_clusters, pred))
+    print("infogain", metrics.adjusted_mutual_info_score(true_clusters, pred))
+    print("homegeneity", metrics.homogeneity_score(true_clusters, pred))
 
 
 
@@ -540,6 +564,10 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_wit
         normalize - a function to apply to every row
         save - a destination to save the matrix 
         evaluate_with - a Series of classes"""
+    if db is not None:
+        sort_by = np.argsort(db[GROUP])
+    else:
+        sort_by = None
     if save and os.path.isfile(save):
         print("reading", save)
         if save.endswith("csv"):
@@ -548,55 +576,52 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_wit
             res = pd.read_pickle(save)
         if save.endswith("json"):
             res = pd.read_json(save) 
-        return res 
+    else:
 
-    print("calculating distance matrix")   
-    # print(db)
-    d = {}
-    sort_by = np.argsort(db[GROUP])
-    db = db.iloc[sort_by, :]
-    cache_normalize = {}
-    for i, r in db.iterrows():
-        if i not in cache_normalize:
-            cache_normalize[i] = normalize(r)
-        index = []
-        distances = []
-        it = db.iterrows()
-        for j, c in it:
-            # while j < i: using that while and using the symmetry (diag is 0) will be twice faster  
-            if j not in cache_normalize:
-                cache_normalize[j] = normalize(c)
-            try:
-                same_normalization = all(cache_normalize[i] == cache_normalize[j])
-            except:
-                same_normalization = cache_normalize[i] == cache_normalize[j]
-            if i != j and same_normalization:
-                print("for languages", r[NAME], c[NAME],"are indiscernibles)")#, cache_normalize[i], cache_normalize[j])
-            index.append(c[NAME])
-            distances.append(func(cache_normalize[i], cache_normalize[j]))
-        d[r[NAME]] = pd.Series(distances, index=index)
-    res = pd.DataFrame(d)[index]
+        print("calculating distance matrix")   
+        # print(db)
+        d = {}
+        db = db.iloc[sort_by, :]
+        cache_normalize = {}
+        for i, r in db.iterrows():
+            if i not in cache_normalize:
+                cache_normalize[i] = normalize(r)
+            index = []
+            distances = []
+            it = db.iterrows()
+            for j, c in it:
+                # while j < i: using that while and using the symmetry (diag is 0) will be twice faster  
+                if j not in cache_normalize:
+                    cache_normalize[j] = normalize(c)
+                try:
+                    same_normalization = all(cache_normalize[i] == cache_normalize[j])
+                except:
+                    same_normalization = cache_normalize[i] == cache_normalize[j]
+                if i != j and same_normalization and VERBOSE:
+                    print("for languages", r[NAME], c[NAME], "are indiscernibles)")#, cache_normalize[i], cache_normalize[j])
+                index.append(c[NAME])
+                distances.append(func(cache_normalize[i], cache_normalize[j]))
+            d[r[NAME]] = pd.Series(distances, index=index)
+        res = pd.DataFrame(d)[index]
 
+        if save:
+            path, basename = os.path.split(save) 
+            cluster_filename = path + os.sep + "../clusters/" + basename   
+            print(cluster_filename)
+            if save.endswith("csv"):
+                res.to_csv(save)
+                to_numerical_classes(db[GROUP]).to_csv(cluster_filename, header=True)
+            elif save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
+                res.to_pickle(save)
+                to_numerical_classes(db[GROUP]).to_pickle(cluster_filename, header=True)
+            elif save.endswith("json"):
+                res.to_json(save)
+                to_numerical_classes(db[GROUP]).to_json(cluster_filename, header=True)
+            else:
+                print("unknown file extension")
     if evaluate_with is not None:
-        evaluate_with = evaluate_with.iloc[sort_by]
-        print("evaluatin cluster")
+        evaluate_with = evaluate_with.iloc[sort_by] if sort_by is not None else evaluate_with
         evaluate_clustering(res, evaluate_with)
-
-    if save:
-        path, basename = os.path.split(save) 
-        cluster_filename = path + os.sep + "../clusters/" + basename   
-        print(cluster_filename)
-        if save.endswith("csv"):
-            res.to_csv(save)
-            to_numerical_classes(db[GROUP]).to_csv(cluster_filename, header=True)
-        elif save.endswith("pkl") or save.endswith("pckl") or  save.endswith("pcl"):
-            res.to_pickle(save)
-            to_numerical_classes(db[GROUP]).to_pickle(cluster_filename, header=True)
-        elif save.endswith("json"):
-            res.to_json(save)
-            to_numerical_classes(db[GROUP]).to_json(cluster_filename, header=True)
-        else:
-            print("unknown file extension")
     return res
 
 
@@ -621,7 +646,7 @@ def create_ngrams(db, n):
     return res
 
 
-def create_learned_distance_matrix(db, learning_algorithm, train_percentage, normalize=lambda x:x, save="", save_model=""):
+def create_learned_distance_matrix(db, learning_algorithm, train_percentage, normalize=lambda x:x, save="", save_model="", evaluate_with=None):
     model = train_model(db, normalize, learning_algorithm, train_percentage, save_model)
     print("calculated model ", save_model)
     comparable_db = np.array([normalize(row) for i, (name, row) in enumerate(db.iterrows())])
@@ -629,9 +654,11 @@ def create_learned_distance_matrix(db, learning_algorithm, train_percentage, nor
     # print(model.transform(comparable_db))
     frame = pd.DataFrame(model.transform(comparable_db), index=db.index.values)
     frame[[GROUP,NAME]] = db.loc[frame.index.values].loc[:, [GROUP, NAME]].astype(str)
-    create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
-    print("transformer", model.transformer())
-    print("metric matrix", model.metric())
+    create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save, evaluate_with=evaluate_with)
+    # print("transformer", model.transformer())
+    # print("metric matrix", model.metric())
+    np.savetxt(save_model + "transformer.csv", model.transformer())
+    np.savetxt(save_model + "metric_matrix.csv", model.metric())
 
 
 def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_percentage=100, save="", save_model="", cross_validate=False):
@@ -664,24 +691,25 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
         os.mkdir(models_dir)
 
     train_percentage = 50
-
+    evaluate_with = is_kurd
+    evaluate_with = inv_db[GROUP]
     #### run on small db ###
     # create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, evaluate_with= is_kurd.iloc[:14])
     # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
 
     """counter hypothesis, how good is geographic distance as a measure"""
-    create_distance_matrix(base_db, calculate_distance_on_earth, get_dists, dist_dir + "distances.csv")
+    create_distance_matrix(base_db, calculate_distance_on_earth, get_dists, dist_dir + "distances.csv", evaluate_with)
 
     """ hand made distances """
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
     create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
-    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv", is_kurd)
-    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv", is_kurd)
+    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv", evaluate_with)
+    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv", evaluate_with)
     create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
     create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
     create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
-    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv", is_kurd)
-    create_distance_matrix(base_db, multi2multi_dist, get_parsed, dist_dir + "multi2one.csv", is_kurd)
+    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv", evaluate_with)
+    create_distance_matrix(base_db, multi2multi_dist, get_parsed, dist_dir + "multi2multi.csv", evaluate_with)
 
     """ metric learning """
     # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
@@ -701,14 +729,13 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
 
     # rca = create_learned_distance_matrix(inv_db.iloc[:14,:], ml.RCA_Supervised(num_chunks=4), 100, to_comparable_array, dist_dir + "tmp.csv", "")
 
-    save_rca = "rca_inv.csv"
-    rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, dist_dir + save_rca, models_dir + save_rca)
+    # save_rca = "rca_inv.csv"
+    # rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, dist_dir + save_rca, models_dir + save_rca)
 
     save_itml = "itml_inv.csv"
-    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, is_kurd)
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, evaluate_with)
     
     # anounce_finish()
-
 
 
 def choose_features_main(inv_db, feature_db, base_db):
@@ -727,6 +754,8 @@ def clean_rare(db, col, mincount=5):
 
 
 def main():
+    # global VERBOSE
+    # VERBOSE = True
     path = FILE_PATH + os.sep + "cache" + os.sep
     if not os.path.isdir(path):
         os.mkdir(path)
@@ -739,6 +768,9 @@ def main():
     inv_db = clean_rare(inv_db, GROUP)
     base_db = clean_rare(base_db, GROUP)
 
+
+    # create_distance_matrix(base_db.iloc[:-14], multi2multi_dist, get_parsed, "", is_kurd)
+    # return
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
 
