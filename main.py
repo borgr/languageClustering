@@ -25,6 +25,8 @@ import inspect
 import metric_learn as ml
 from IPAParser import parsePhon
 import scipy.spatial.distance as spdist
+from sklearn import metrics
+from sklearn import cluster
 from sklearn import linear_model
 from sklearn.feature_selection import RFECV, RFE
 # import rpy2.robjects as robjects
@@ -142,12 +144,13 @@ def parseInv(inv):
     return [parsePhon(x) for x in inv]
 
 
-def parse(inv_file="", feature_file="", base_file=""):
-    if inv_file and feature_file and base_file:
-        if os.path.isfile(inv_file) and os.path.isfile(feature_file) and os.path.isfile(base_file):
+def parse(inv_file="", feature_file="", base_file="", is_kurd_file=""):
+    if inv_file and feature_file and base_file and is_kurd_file:
+        if os.path.isfile(inv_file) and os.path.isfile(feature_file) and os.path.isfile(base_file) and os.path.isfile(is_kurd_file):
             print("reading dbs from file")
-            return pd.read_pickle(inv_file), pd.read_pickle(feature_file), pd.read_pickle(base_file)
+            return pd.read_pickle(inv_file), pd.read_pickle(feature_file), pd.read_pickle(base_file), pd.read_pickle(is_kurd_file)
     dataframe = read_kurd()
+
 
     # collect all phonemes
     euro_db = read_euro()
@@ -156,15 +159,20 @@ def parse(inv_file="", feature_file="", base_file=""):
         all_phons.update(set(euro_db[key]["cons"]))
 
     # construct kurd db
+    is_kurd = []
+    is_kurd_idx = []
+
     binary_df_pure = pd.DataFrame()
     # """Note, this is not an efficient way to create a db, 
     # better to save as list of series\DF and then merge or create a new one of lists"""
-    binary_df_w_borrowings = pd.DataFrame() 
-    for l in dataframe['Name'].unique():
+    binary_df_w_borrowings = pd.DataFrame()
+    for key in dataframe['Name'].unique():
+        is_kurd.append(1)
+        is_kurd_idx.append(key)
         binary_df_pure = binary_df_pure.append(binarise_lang(dataframe[(
-            dataframe['Name'] == l) & (dataframe['Status'] != 'borrowed')], all_phons))
+            dataframe['Name'] == key) & (dataframe['Status'] != 'borrowed')], all_phons))
         # binary_df_w_borrowings = binary_df_w_borrowings.append(
-        #     binarise_lang(dataframe[dataframe['Name'] == l], all_phons))
+        #     binarise_lang(dataframe[dataframe['Name'] == key], all_phons))
 
     # create a db containing all data
     base_db = []
@@ -177,11 +185,15 @@ def parse(inv_file="", feature_file="", base_file=""):
     # create a db containing binarized inventories 
     inv_db = binary_df_pure.copy()
     for key in euro_db:
+        is_kurd.append(0)
+        is_kurd_idx.append(key)
         row = euro_db[key]
         inv = row[INV]
         inv_db = inv_db.append(binarise_euro_lang(row, all_phons, key))
         base_db.append((key, row["coords"][0], row["coords"][1], row["gen"][0], inv, parsed))
-    
+
+    # create a series mapping rows to kurd or not kurd
+    is_kurd = pd.Series(is_kurd, index=is_kurd_idx)
     # binarize parsed
     base_db = pd.DataFrame(base_db, columns=[NAME, LON, LAT, GROUP, INV, PARSED])
 
@@ -210,14 +222,16 @@ def parse(inv_file="", feature_file="", base_file=""):
         feature_db = feature_db.append(binarize_db(local_df, [flatten_parse(x) for x in r[PARSED]], all_features))
 
     feature_db.set_index(NAME, drop=False, inplace=True)
-    if inv_file and feature_file and base_file:
+    if inv_file and feature_file and base_file and is_kurd_file:
         print("dumping to ", inv_file)
         inv_db.to_pickle(inv_file) 
         print("dumping to ", feature_file)
         feature_db.to_pickle(feature_file) 
         print("dumping to ", base_file)
         base_db.to_pickle(base_file)
-    return inv_db, feature_db, base_db
+        print("dumping to ", is_kurd_file)
+        is_kurd.to_pickle(is_kurd_file)
+    return inv_db, feature_db, base_db, is_kurd
 
 
 def anounce_finish():
@@ -459,11 +473,25 @@ def to_numerical_classes(srs):
         if not found:
             srs[name] = len(contents) + 1
             contents.append(cur_content)
+    print(srs)
     return pd.concat([origin, srs], axis=1)
 
 
-def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
-    """ gets a db and a function and calculate the distance metrics"""
+def evaluate_clustering(symmat, truth):
+    num_clusters = len(Counter(truth))
+    true_clusters = to_numerical_classes(truth).drop("names", axis=1).iloc[:,0].as_matrix()
+    model = cluster.SpectralClustering(n_clusters=num_clusters, affinity="precomputed")
+    pred = model.fit_predict(symmat)
+    print("clustering evaluation score", metrics.adjusted_rand_score(true_clusters, pred))
+
+
+
+
+def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_with=None):
+    """ gets a db and a function and calculate the distance metrics
+        normalize - a function to apply to every row
+        save - a destination to save the matrix 
+        evaluate_with - a Series of classes"""
     if save and os.path.isfile(save):
         print("reading", save)
         if save.endswith("csv"):
@@ -498,6 +526,12 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save=""):
             distances.append(func(cache_normalize[i], cache_normalize[j]))
         d[r[NAME]] = pd.Series(distances, index=index)
     res = pd.DataFrame(d)[index]
+
+    if evaluate_with is not None:
+        evaluate_with = evaluate_with.iloc[sort_by]
+        print("evaluatin cluster")
+        evaluate_clustering(res, evaluate_with)
+
     if save:
         path, basename = os.path.split(save) 
         cluster_filename = path + os.sep + "../clusters/" + basename   
@@ -546,6 +580,8 @@ def create_learned_distance_matrix(db, learning_algorithm, train_percentage, nor
     frame = pd.DataFrame(model.transform(comparable_db), index=db.index.values)
     frame[[GROUP,NAME]] = db.loc[frame.index.values].loc[:, [GROUP, NAME]].astype(str)
     create_distance_matrix(frame, spdist.euclidean, create_col_remover([GROUP,NAME]), save)
+    print("transformer", model.transformer())
+    print("metric matrix", model.metric())
 
 
 def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_percentage=100, save="", save_model="", cross_validate=False):
@@ -566,7 +602,7 @@ def find_best_features(db, learning_algorithm, normalize=lambda x:x, train_perce
         # print("features chosen:", list(model.support_[sort]))
 
 
-def calculate_distances_main(inv_db, feature_db, base_db):
+def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
     dist_dir = FILE_PATH + "/distance_metrics/"
     if not os.path.isdir(dist_dir):
         os.mkdir(dist_dir)
@@ -580,8 +616,8 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     train_percentage = 50
 
     #### run on small db ###
-    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
-
+    create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, evaluate_with= is_kurd.iloc[:14])
+    return
     """ metric learning """
     # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
     # prior = np.random.rand(number_of_features, number_of_features)
@@ -604,7 +640,8 @@ def calculate_distances_main(inv_db, feature_db, base_db):
     rca = create_learned_distance_matrix(inv_db, ml.RCA_Supervised(), train_percentage, to_comparable_array, dist_dir + save_rca, models_dir + save_rca)
 
     save_itml = "itml_inv.csv"
-    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml)
+    itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, is_kurd)
+    
 
     """ hand made distances """
     create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
@@ -642,15 +679,17 @@ def main():
     inv_file = path + "inv.pckl"
     feature_file = path + "features.pckl"
     base_file = path + "base.pckl"
-    inv_db, feature_db, base_db = parse(inv_file, feature_file, base_file)
+    is_kurd_file = path + "kurd.pckl"
+    inv_db, feature_db, base_db, is_kurd = parse(inv_file, feature_file, base_file, is_kurd_file)
     inv_db = clean_rare(inv_db, GROUP)
     base_db = clean_rare(base_db, GROUP)
     
+
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
 
-    calculate_distances_main(inv_db, feature_db, base_db)
-    choose_features_main(inv_db, feature_db, base_db)
+    calculate_distances_main(inv_db, feature_db, base_db, is_kurd)
+    # choose_features_main(inv_db, feature_db, base_db)
 
 if __name__ == '__main__':
     main()
