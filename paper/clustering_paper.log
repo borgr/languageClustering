@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.6.19)  25 AUG 2017 10:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.6.19)  28 AUG 2017 18:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -949,24 +949,19 @@ LaTeX Font Info:    Try loading font information for T1+pcr on input line 71.
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 76.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 77.
 
-<../plots/Matching_pic_3_1_and_3_2.jpg, id=7, 203.76125pt x 338.26375pt>
+<../plots/Matching_pic_3_1_and_3_2.jpg, id=8, 203.76125pt x 338.26375pt>
 File: ../plots/Matching_pic_3_1_and_3_2.jpg Graphic file (type jpg)
 
 <use ../plots/Matching_pic_3_1_and_3_2.jpg>
 Package pdftex.def Info: ../plots/Matching_pic_3_1_and_3_2.jpg used on input li
-ne 79.
+ne 82.
 (pdftex.def)             Requested size: 182.12117pt x 302.35446pt.
 
-Underfull \hbox (badness 1521) in paragraph at lines 84--86
+Underfull \hbox (badness 1521) in paragraph at lines 87--89
  []\T1/ptm/b/n/10.95 Bipartite graph match-ing \T1/ptm/m/n/10.95 - given a bi-p
 ar-tite
- []
-
-
-Underfull \hbox (badness 4024) in paragraph at lines 91--91
-[][][]\T1/ptm/m/n/9 All code is freely avail-able and can be found in
  []
 
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
@@ -977,502 +972,506 @@ Underfull \hbox (badness 4024) in paragraph at lines 91--91
 ]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [2 <../plots/Matching_pic_3_1_and_3_2.jpg>]
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 102.
+
+Underfull \hbox (badness 4024) in paragraph at lines 97--97
+[][][]\T1/ptm/m/n/9 All code is freely avail-able and can be found in
+ []
+
+[2 <../plots/Matching_pic_3_1_and_3_2.jpg>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [3]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 109.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 102.
- [3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 109.
+ [4]
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
 []\T1/ptm/m/n/10.95 It might be faster to ask
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
 \T1/ptm/m/n/10.95 leshem.choshen@mail.huji.ac.il for the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--124
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
 []\T1/ptm/m/n/10.95 The main python file “bi-na-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--124
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
 \T1/ptm/m/n/10.95 rize_representations.py con-tains mains of
  []
 
 
-Underfull \hbox (badness 1721) in paragraph at lines 124--125
+Underfull \hbox (badness 1721) in paragraph at lines 131--132
 []\T1/ptm/m/n/10.95 calculate_distances_main(inv_db, fea-ture_db,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--126
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
 []\T1/ptm/m/n/10.95 choose_features_main(inv_db, fea-ture_db,
  []
 
-<../plots/dends.pdf, id=57, 614.295pt x 794.97pt>
+<../plots/dends.pdf, id=67, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf>
-Package pdftex.def Info: ../plots/dends.pdf used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf used on input line 139.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf>
-Package pdftex.def Info: ../plots/dends.pdf used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf used on input line 139.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 
-<../plots/dends.pdf, id=60, page=1, 614.295pt x 794.97pt>
+<../plots/dends.pdf, id=70, page=1, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 1>
-Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 139.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 1>
-Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
- [4]
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 1>
-Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 1>
-Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 1>
-Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page1 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [5 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=85, page=2, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=89, page=2, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 2>
-Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 2>
-Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 2>
-Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page2 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [6 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=92, page=3, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=96, page=3, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 3>
-Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 3>
-Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 3>
-Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page3 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [7 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=100, page=4, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=104, page=4, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 4>
-Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 4>
-Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 4>
-Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page4 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [8 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=107, page=5, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=111, page=5, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 5>
-Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 5>
-Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 5>
-Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page5 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [9 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=113, page=6, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=117, page=6, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 6>
-Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 6>
-Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 6>
-Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page6 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [10 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/dends.pdf, id=118, page=7, 614.295pt x 794.97pt>
+>] <../plots/dends.pdf, id=122, page=7, 614.295pt x 794.97pt>
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 7>
-Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
  <use ../plots/dends.pdf, page 7>
-Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/dends.pdf Graphic file (type pdf)
 
 <use ../plots/dends.pdf, page 7>
-Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 132.
+Package pdftex.def Info: ../plots/dends.pdf, page7 used on input line 139.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [11 <../plots/dends.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/dends.pdf): PDF inclusion: inv
 alid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=123, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=129, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf>
-Package pdftex.def Info: ../plots/rank.pdf used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf used on input line 141.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf>
-Package pdftex.def Info: ../plots/rank.pdf used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf used on input line 141.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 
-<../plots/rank.pdf, id=126, page=1, 614.295pt x 794.97pt>
+<../plots/rank.pdf, id=132, page=1, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 1>
-Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 141.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 1>
-Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 1>
-Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 1>
-Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 1>
-Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page1 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [12 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=143, page=2, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=149, page=2, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 2>
-Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 2>
-Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 2>
-Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page2 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [13 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=149, page=3, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=155, page=3, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 3>
-Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 3>
-Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 3>
-Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page3 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [14 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=154, page=4, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=160, page=4, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 4>
-Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 4>
-Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 4>
-Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page4 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [15 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=159, page=5, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=165, page=5, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 5>
-Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 5>
-Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 5>
-Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page5 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [16 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=164, page=6, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=170, page=6, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 6>
-Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 6>
-Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 6>
-Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page6 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [17 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=169, page=7, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=175, page=7, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 7>
-Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 7>
-Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 7>
-Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page7 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [18 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=174, page=8, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=181, page=8, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 8>
-Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 8>
-Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 8>
-Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page8 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [19 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=180, page=9, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=187, page=9, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 9>
-Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 9>
-Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 9>
-Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page9 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [20 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=186, page=10, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=192, page=10, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 10>
-Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 10>
-Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 10>
-Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page10 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [21 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=191, page=11, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=197, page=11, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 11>
-Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 11>
-Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 11>
-Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page11 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [22 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=211, page=12, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=217, page=12, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 12>
-Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 12>
-Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 12>
-Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page12 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [23 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=216, page=13, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=222, page=13, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 13>
-Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 13>
-Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 13>
-Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page13 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [24 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=221, page=14, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=227, page=14, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 14>
-Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 14>
-Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 14>
-Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page14 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [25 <../plots/rank.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ../plots/rank.pdf): PDF inclusion: inva
 lid other resource which is no dict (key 'ProcSets', type <array>); ignored.
->] <../plots/rank.pdf, id=227, page=15, 614.295pt x 794.97pt>
+>] <../plots/rank.pdf, id=233, page=15, 614.295pt x 794.97pt>
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 15>
-Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
  <use ../plots/rank.pdf, page 15>
-Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: ../plots/rank.pdf Graphic file (type pdf)
 
 <use ../plots/rank.pdf, page 15>
-Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 134.
+Package pdftex.def Info: ../plots/rank.pdf, page15 used on input line 141.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
  [26 <../plots/rank.pdf
 
@@ -1494,26 +1493,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--55
  []
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 138.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 146.
  [27
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 138.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 146.
  (./clustering_paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 138.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 138.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 146.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 146.
 Package rerunfilecheck Info: File `clustering_paper.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 138.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 146.
  ) 
 Here is how much of TeX's memory you used:
- 29526 strings out of 494953
- 691669 string characters out of 6180977
- 954247 words of memory out of 5000000
- 32187 multiletter control sequences out of 15000+600000
+ 29530 strings out of 494953
+ 691741 string characters out of 6180977
+ 956346 words of memory out of 5000000
+ 32189 multiletter control sequences out of 15000+600000
  43282 words of font info for 77 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 61i,18n,79p,1500b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 61i,18n,79p,1880b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{cite.macklin2015high} has been referenced but doe
 s not exist, replaced by a fixed one
 
@@ -1528,6 +1527,9 @@ ot exist, replaced by a fixed one
 
 pdfTeX warning (dest): name{cite.cha2007comprehensive} has been referenced but 
 does not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{cite.patnaik2016divisive} has been referenced but d
+oes not exist, replaced by a fixed one
 
 pdfTeX warning (dest): name{cite.Nikolaev2015database} has been referenced but 
 does not exist, replaced by a fixed one
@@ -1546,10 +1548,10 @@ texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on clustering_paper.pdf (27 pages, 1432655 bytes).
+Output written on clustering_paper.pdf (27 pages, 1438799 bytes).
 PDF statistics:
- 271 PDF objects out of 1000 (max. 8388607)
- 183 compressed objects within 2 object streams
- 52 named destinations out of 1000 (max. 500000)
+ 277 PDF objects out of 1000 (max. 8388607)
+ 189 compressed objects within 2 object streams
+ 54 named destinations out of 1000 (max. 500000)
  158 words of extra memory for PDF output out of 10000 (max. 10000000)
 

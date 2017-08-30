@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In[1]:
@@ -16,6 +15,7 @@ from munkres import Munkres
 munkres = Munkres()
 from collections import Counter
 from itertools import product
+from math import sin, cos, sqrt, atan2, radians
 import re
 from functools import reduce
 import json
@@ -271,6 +271,12 @@ def create_col_remover(indexes):
     return remover
 
 
+def get_dists(row):
+    """creates a tuple of lat lonfrom base db row"""
+    return row[LAT], row[LON]
+
+
+
 def get_parsed(row):
     """creates a list of frozen sets from a base db row"""
     res = []
@@ -297,6 +303,48 @@ def counting_feature_dist(feature_set_a, feature_set_b):
             sum([1 for b in feature_set_b if b not in feature_set_a])) / (
             len(feature_set_a) + len(feature_set_b))
 
+
+def calculate_distance_on_earth(pos1, pos2):
+    # approximate radius of earth in km
+    R = 6371.0
+    
+    (lat1, lon1), (lat2, lon2) = pos1, pos2
+    (lat1, lon1), (lat2, lon2) = (float(lat1), float(lon1)), (float(lat2), float(lon2))
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+
+def multi2multi_dist(a, b, dist=counting_feature_dist):
+    """ sums the distances from each element in one language to its closest relative in the other"""
+    return multi2one_dist(a, b, dist) + multi2one_dist(b, a, dist)
+
+
+def symmetric_multi2one_dist(a, b, dist=counting_feature_dist):
+    """ sums minimal multi2one distances"""
+  return min(multi2one_dist(a, b, dist), multi2one_dist(b, a, dist))
+
+
+def multi2one_dist(a, b, dist=counting_feature_dist):
+    """ sums the distances of each element in a 
+        to its most closely related element in b""" 
+    empty_feature = frozenset()
+    a = list(a)
+    b = list(b)
+
+    assert(dist(a[0], frozenset())) == 1
+    dist = 0
+    for elemA in a:
+        bestDist = float("inf")
+        for elemB in b:
+            bestDist = min(bestDist, dist(elemA, elemB))
+        dist += bestDist
+    return dist
 
 def aligning_dist(a, b, dist=counting_feature_dist):
     """ sums the distances of the most closely related phonemes""" 
@@ -513,7 +561,9 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_wit
             cache_normalize[i] = normalize(r)
         index = []
         distances = []
-        for j, c in db.iterrows():
+        it = db.iterrows()
+        for j, c in it:
+            # while j < i: using that while and using the symmetry (diag is 0) will be twice faster  
             if j not in cache_normalize:
                 cache_normalize[j] = normalize(c)
             try:
@@ -521,7 +571,7 @@ def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_wit
             except:
                 same_normalization = cache_normalize[i] == cache_normalize[j]
             if i != j and same_normalization:
-                print("for languages", r[NAME], c[NAME],"checked vallues are the same")#, cache_normalize[i], cache_normalize[j])
+                print("for languages", r[NAME], c[NAME],"are indiscernibles)")#, cache_normalize[i], cache_normalize[j])
             index.append(c[NAME])
             distances.append(func(cache_normalize[i], cache_normalize[j]))
         d[r[NAME]] = pd.Series(distances, index=index)
@@ -616,8 +666,23 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
     train_percentage = 50
 
     #### run on small db ###
-    create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, evaluate_with= is_kurd.iloc[:14])
-    return
+    # create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, evaluate_with= is_kurd.iloc[:14])
+    # print(create_distance_matrix(inv_db.iloc[:14,:], spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv"))
+
+    """counter hypothesis, how good is geographic distance as a measure"""
+    create_distance_matrix(base_db, calculate_distance_on_earth, get_dists, dist_dir + "distances.csv")
+
+    """ hand made distances """
+    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
+    create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
+    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv", is_kurd)
+    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv", is_kurd)
+    create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
+    create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
+    create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
+    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv", is_kurd)
+    create_distance_matrix(base_db, multi2multi_dist, get_parsed, dist_dir + "multi2one.csv", is_kurd)
+
     """ metric learning """
     # number_of_features = len(to_comparable_array((next(inv_db.iterrows())[1])))
     # prior = np.random.rand(number_of_features, number_of_features)
@@ -642,18 +707,8 @@ def calculate_distances_main(inv_db, feature_db, base_db, is_kurd):
     save_itml = "itml_inv.csv"
     itml = create_learned_distance_matrix(inv_db, ml.ITML_Supervised(), train_percentage, to_comparable_array, dist_dir + save_itml, models_dir + save_itml, is_kurd)
     
-
-    """ hand made distances """
-    create_distance_matrix(base_db, lambda x,y:bag_of_ngram_features_dist(x, y, 2, spdist.euclidean), get_parsed, dist_dir + "bigram_euclidean.csv")
-    create_distance_matrix(inv_db, spdist.yule, to_comparable_array, dist_dir + "inv_yole.csv")
-    create_distance_matrix(inv_db, spdist.jaccard, to_comparable_array, dist_dir + "inv_jaccard.csv")
-    create_distance_matrix(inv_db, spdist.hamming, to_comparable_array, dist_dir + "inv_hamming.csv")
-    create_distance_matrix(base_db, bag_of_ngram_features_dist, get_parsed, dist_dir + "bigram_cosine.csv")
-    create_distance_matrix(base_db, bag_of_features_dist, get_parsed, dist_dir + "bag_cosine.csv")
-    create_distance_matrix(base_db, lambda x,y:bag_of_features_dist(x,y,spdist.euclidean), get_parsed, dist_dir + "bag_euclidean.csv")
-    create_distance_matrix(base_db, aligning_dist, get_parsed, dist_dir + "aligned.csv")
-
     # anounce_finish()
+
 
 
 def choose_features_main(inv_db, feature_db, base_db):
@@ -683,13 +738,13 @@ def main():
     inv_db, feature_db, base_db, is_kurd = parse(inv_file, feature_file, base_file, is_kurd_file)
     inv_db = clean_rare(inv_db, GROUP)
     base_db = clean_rare(base_db, GROUP)
-    
 
     assert(all([x in base_db.index.values for x in inv_db.index.values]))
     assert(all([x in inv_db.index.values for x in base_db.index.values]))
 
     calculate_distances_main(inv_db, feature_db, base_db, is_kurd)
     # choose_features_main(inv_db, feature_db, base_db)
+    anounce_finish()
 
 if __name__ == '__main__':
     main()
