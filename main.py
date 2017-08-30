@@ -550,13 +550,15 @@ def evaluate_clustering(distmat, truth):
 
     num_clusters = len(Counter(truth))
     true_clusters = to_numerical_classes(truth).drop("names", axis=1).iloc[:,0].as_matrix()
-    model = cluster.SpectralClustering(n_clusters=num_clusters, affinity="precomputed")
+    # model = cluster.SpectralClustering(n_clusters=num_clusters, affinity="precomputed")
+    # model = cluster.AgglomerativeClustering(n_clusters=num_clusters, affinity="precomputed", linkage="complete")
+    model = cluster.AffinityPropagation(affinity="precomputed")
+
     pred = model.fit_predict(symmat)
     print("clustering evaluation score", metrics.adjusted_rand_score(true_clusters, pred))
     print("infogain", metrics.adjusted_mutual_info_score(true_clusters, pred))
     print("homegeneity", metrics.homogeneity_score(true_clusters, pred))
-
-
+    print("fowlkes_mallows_score", metrics.fowlkes_mallows_score(true_clusters, pred))
 
 
 def create_distance_matrix(db, func, normalize=lambda x:x, save="", evaluate_with=None):
