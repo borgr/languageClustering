@@ -555,7 +555,7 @@ def evaluate_clustering(distmat, truth):
     model = cluster.AffinityPropagation(affinity="precomputed")
 
     pred = model.fit_predict(symmat)
-    print("clustering evaluation score", metrics.adjusted_rand_score(true_clusters, pred))
+    print("rand", metrics.adjusted_rand_score(true_clusters, pred))
     print("infogain", metrics.adjusted_mutual_info_score(true_clusters, pred))
     print("homegeneity", metrics.homogeneity_score(true_clusters, pred))
     print("fowlkes_mallows_score", metrics.fowlkes_mallows_score(true_clusters, pred))
